@@ -8,6 +8,7 @@ df.drop("id_emplacement",axis =1, inplace = True)
 df.drop("genre",axis =1, inplace = True)
 df.drop("variete",axis =1, inplace = True)
 df.drop("remarquable",axis =1, inplace = True)
+df.drop("type_emplacement",axis =1, inplace = True)
 print(df)
 print("Numéro d'arbres: ",len(df))
 
