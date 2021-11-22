@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import pandas as pd
 
 df = pd.read_csv(r'C:\Users\imane\OneDrive\Desktop\Data4good\p2-arbres-fr.csv', sep =";", encoding = "utf-8")
@@ -25,4 +26,22 @@ df["hauteur_m"] = 100 * df["hauteur_m"]
 
 new_df = df.rename(columns={"hauteur_m":"hauteur_cm"})
 
-print(new_df)
+df.dropna(subset=["stade_developpement"], inplace = True)
+print("Numéro d'arbres: ",len(df))
+
+
+
+new_df.boxplot(column=['circonference_cm'])
+
+plt.show()
+new_df.boxplot(column=['hauteur_cm'])
+plt.show()
+
+import missingno as msno
+
+msno.bar(new_df)
+plt.show()
+
+msno.heatmap(new_df)
+plt.show()
+
