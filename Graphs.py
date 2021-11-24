@@ -85,3 +85,12 @@ g = sns.scatterplot(data = for_sns_2,x = "circonference_cm",y = "hauteur_cm",hue
 g.set_title("hauteur_cm et circonference_cm par arrondissement")
 plt.show()
 
+
+
+selected_col_2 = new_df[["stade_developpement","hauteur_cm"]]
+new_df_4 = selected_col_2.copy()
+ndf_4 = new_df_4.groupby("stade_developpement").sum()
+for_sns_3 = ndf_4.reset_index()
+gr = sns.lineplot(data = for_sns_3, x ="stade_developpement", y= "hauteur_cm")
+gr.set_title("Hauteur_cm par stade de developpement")
+plt.show()
