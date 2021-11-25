@@ -103,14 +103,15 @@ graph = sns.histplot(data = ndf_5,x= "arrondissement", weights= "n_tree", hue = 
 graph.set_title("Nombre d'arbres par arrondissement et stade de developpement")
 plt.show()
 
-selected_col_4 = new_df[["n_tree","domanialite"]]
+selected_col_4 = new_df[["n_tree","domanialite","arrondissement"]]
 new_df_6 = selected_col_4.copy()
-ndf_6 = new_df_6.groupby(["domanialite"]).sum().reset_index()
+ndf_6 = new_df_6.groupby(["domanialite","arrondissement"]).sum().reset_index()
 
-import squarify
-squarify.plot(sizes=ndf_6["n_tree"], label= ndf_6["domanialite"], pad = True).set_title("Nombre d'arbres par dominalité")
+import plotly.express as px
+figure = px.treemap(ndf_6,path = ["domanialite","arrondissement"], values="n_tree")
 
+figure.show()
 
-plt.show()
-
+import folium
+map = folium.Map(location=[48.856614, 2.3522219], zoom_start=10,control_scale=True)
 
