@@ -112,6 +112,26 @@ figure = px.treemap(ndf_6,path = ["domanialite","arrondissement"], values="n_tre
 
 figure.show()
 
-import folium
-map = folium.Map(location=[48.856614, 2.3522219], zoom_start=10,control_scale=True)
 
+
+selected_col_5 = new_df[["arrondissement", "n_tree", "geo_point_2d_a", "geo_point_2d_b"]]
+new_df_7 = selected_col_5.copy()
+ndf_7 = new_df_7.groupby("arrondissement").sum().reset_index()
+ndf_7.drop('geo_point_2d_a', axis=1, inplace=True)
+ndf_7.drop('geo_point_2d_b', axis=1, inplace=True)
+new_df_8 = new_df_7.groupby(["arrondissement"]).nth(0).reset_index()
+a = new_df_8["geo_point_2d_a"]
+b = new_df_8["geo_point_2d_b"]
+ndf_7 = ndf_7.join(a)
+ndf_7 = ndf_7.join(b)
+
+import folium
+
+map = folium.Map(location=[48.856614, 2.3522219], zoom_start=14, control_scale=True, tiles="Stamen Terrain")
+for i in range(0, len(ndf_7)):
+    folium.Circle(
+        location=[ndf_7.iloc[i]["geo_point_2d_a"], ndf_7.iloc[i]["geo_point_2d_b"]],
+        tooltip=(ndf_7.iloc[i]["arrondissement"], ndf_7.iloc[i]["n_tree"]),
+        radius=int(ndf_7.iloc[i]["n_tree"]) / len(ndf_7), fill=True,
+
+    ).add_to(map)
