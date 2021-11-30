@@ -6,14 +6,17 @@ import plotly.express as px
 import folium
 
 df = pd.read_csv(r'C:\Users\imane\OneDrive\Desktop\Data4good\p2-arbres-fr.csv', sep =";", encoding = "utf-8")
+df.info()
+h_map = px.imshow(df.isnull())
 df.drop('id', axis = 1, inplace= True)
 df.drop("complement_addresse",axis =1, inplace = True)
 df.drop("numero",axis =1, inplace = True)
 df.drop("id_emplacement",axis =1, inplace = True)
-df.drop("genre",axis =1, inplace = True)
+df.drop("espece",axis =1, inplace = True)
 df.drop("variete",axis =1, inplace = True)
 df.drop("remarquable",axis =1, inplace = True)
 df.drop("type_emplacement",axis =1, inplace = True)
+df.drop("libelle_francais",axis =1, inplace = True)
 
 df.drop(df.index[(df["circonference_cm"] == 0)], axis = 0, inplace=True)
 df.drop(df.index[(df["hauteur_m"] == 0)], axis = 0, inplace=True)
@@ -28,8 +31,9 @@ df["hauteur_m"] = 100 * df["hauteur_m"]
 new_df = df.rename(columns={"hauteur_m":"hauteur_cm"})
 
 
-boxplot_cir = px.box(new_df, y = "circonference_cm")
-boxplot_hau = px.box(new_df, y = "hauteur_cm")
+boxplot_cir = px.box(new_df, y = ["circonference_cm"])
+boxplot_hau = px.box(new_df, y = ["hauteur_cm"])
+
 
 
 heatmap = px.imshow(new_df.isnull())
@@ -100,8 +104,26 @@ for i in range(0, len(new_df_7)):
 map.save("Paris_map.html")
 
 
+selcted_scatter_map = new_df[["arrondissement","geo_point_2d_a","geo_point_2d_b","domanialite"]]
+df_scatter_map = selcted_scatter_map.copy()
+scatter_map = px.scatter_mapbox(df_scatter_map,lat ="geo_point_2d_a",lon="geo_point_2d_b",hover_name="arrondissement", hover_data=["domanialite"],
+                                zoom=14, height=500, color="arrondissement")
+scatter_map.update_layout(mapbox_style="open-street-map")
+
+
+selected_bar_species = new_df[["n_tree","genre"]]
+df_species = selected_bar_species.copy()
+new_df_8 = df_species.groupby(["genre"]).sum().reset_index()
+ndf = new_df_8.sort_values(by="n_tree",ascending=False)
+species_bar = px.bar(ndf,x = "genre", y="n_tree")
+
 app = dash.Dash(__name__)
 app.layout = html.Div(children=[html.H1(children="Distribution des arbres à Paris"),
+                                html.Div(children="Heatmap avent netoiyage "),
+                                dcc.Graph(
+                                    id = "heatmap avant",
+                                    figure= h_map
+                                ),
                                 html.Div(children="Circonference_cm Boxplot"),
                                 dcc.Graph(
                                     id = "cir boxplot",
@@ -112,7 +134,7 @@ app.layout = html.Div(children=[html.H1(children="Distribution des arbres à Par
                                     id = "hau boxplot",
                                     figure= boxplot_hau
                                 ),
-                                html.Div(children="Valeures manquantes"),
+                                html.Div(children="Heatmap après nettoyage"),
                                 dcc.Graph(
                                     id = "empty value",
                                     figure= heatmap
@@ -121,6 +143,11 @@ app.layout = html.Div(children=[html.H1(children="Distribution des arbres à Par
                                 dcc.Graph(
                                     id = "arbres/arr",
                                     figure= bar_plot
+                                ),
+                                html.Div(children="Nombre d'arbres par genre"),
+                                dcc.Graph(
+                                    id = "arbres/genre",
+                                    figure= species_bar
                                 ),
                                 html.Div(children="Hauteur et circonference moyenne par arrondissement"),
                                 dcc.Graph(
@@ -148,6 +175,11 @@ app.layout = html.Div(children=[html.H1(children="Distribution des arbres à Par
                                 srcDoc=open("Paris_map.html", 'r').read(),
                                 width='75%',
                                 height='500'
+                                ),
+                                html.Div(children="Carte: Arbres par arrondissement et domanialite"),
+                                dcc.Graph(
+                                    id = "arbres/arr/dom",
+                                    figure= scatter_map
                                 ),
 
                                 ])
