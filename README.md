@@ -9,9 +9,6 @@ Votre solution contribuera à une optimisation des tournées pour l’entretien 
 Vous aurez ainsi un impact réel sur le futur de la ville de Paris !
 
 
-Données :
-
-Téléchargez le jeu de données des arbres de la ville de Paris à cette adresse. Vous pouvez aussi le consulter dans son contexte sur opendata.paris.fr.
 
 Règles du challenge :
 
